@@ -1,7 +1,7 @@
 # GPA
 GarryHost Plugins Autoloader
 
-Just edit : `$config['cfg']['dir'] (Plugins Folder)`
+edit : `$config['cfg']['dir'] (Plugins Folder)`
 
 # Plugins Config Example : 
 `/your_directory_plugins/plugins_name/GPA-autoloader.php (Default Name)`
