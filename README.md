@@ -25,6 +25,6 @@ Just edit : `$config['cfg']['dir'] (Plugins Folder)`
 │   │   ├── GPA-autoloader.php (Config File)
 │   │   └── Function/ (Plugins Class Folder)
 │   └── PluginsName2/
-│   │   ├── GPA-autoloader.php (Config File)
-│   │   └── Function/ (Plugins Class Folder)
+│       ├── GPA-autoloader.php (Config File)
+│       └── Function/ (Plugins Class Folder)
 ```
