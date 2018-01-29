@@ -24,3 +24,15 @@ $GPA_PLUGINS['status']      = 'enabled'; // (enabled or disabled)
 │       ├── GPA-autoloader.php (Config File)
 │       └── Function/ (Plugins Class Folder)
 ```
+
+# Include GPA on your website
+```
+include('GPA-Class.php')
+
+// If you have a bug you can debug with this code
+$config['PLUGINS_LOADED'] // Plugins loaded with this script
+$config['PLUGINS_DISABLED'] // Plugins disabled ($GPA_PLUGINS['status'] inside GPA-autoloader.php)
+$config['PLUGINS_ERROR'] // Plugins Error result example : 'file_directory' => 'MyPlugins1', 'message' => 'GPA not found'
+
+use print_r() for display these variables
+```
