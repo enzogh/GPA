@@ -4,7 +4,7 @@ GarryHost Plugins Autoloader
 edit : `$config['cfg']['dir'] (Plugins Folder)`
 
 # Plugins Config Example : 
-`/your_directory_plugins/plugins_name/GPA-autoloader.php (Default Name)`
+`/your_directory_plugins/plugins_name/GPA-autoloader.php (Config file name don't use other name)`
 
 (Inside)
 ```
