@@ -1,13 +1,16 @@
 <?php
 $config = array(
     'CFG' => array(
-        'dir' => 'plugins',
+        'dir' => 'plugins', // Plugins Directory
+        'dir_condenser' => 'condenser', // Condenser Directory
     ),
 
     'PLUGINS' => array(),
     'PLUGINS_LOADED' => array(),
     'PLUGINS_DISABLED' => array(),
     'PLUGINS_ERROR' => array(),
+
+    'PLUGINS_CACHE' => array(),
 );
 
 $GPA = scandir($config['CFG']['dir'], 1);
@@ -28,7 +31,17 @@ for($i = 0; $i < count($config['PLUGINS']); $i++){
 
                 foreach($scandir as $item){
                     if($item != '.' && $item != '..'){
-                        include($config['CFG']['dir'].'/'.$config['PLUGINS'][$i].'/'.$GPA_PLUGINS['location'].'/'.$item);
+                        $file = $config['CFG']['dir'].'/'.$config['PLUGINS'][$i].'/'.$GPA_PLUGINS['location'].$item;
+
+                        include($file);
+
+                        $handle = fopen($file, 'r');
+                        $contents = fread($handle, filesize($file));
+                        fclose($handle);
+
+                        if($GPA_PLUGINS['condenser'] == 'enabled'){
+                            array_push($config['PLUGINS_CACHE'], base64_encode($contents));
+                        }
                     }
                 }
 
@@ -47,5 +60,25 @@ for($i = 0; $i < count($config['PLUGINS']); $i++){
         }
     } else {
         array_push($config['PLUGINS_ERROR'], array('file_directory' => $config['PLUGINS'][$i], 'message' => 'GPA not found'));
+    }
+}
+
+if(!empty($config['PLUGINS_CACHE'])){
+    if(!file_exists($config['CFG']['dir_condenser'].'/GPA-condenser.php')){
+        $handle = fopen($config['CFG']['dir_condenser'].'/GPA-condenser.php', 'a+');
+
+        for($i = 0; $i < count($config['PLUGINS_CACHE']); $i++){
+            $code = base64_decode($config['PLUGINS_CACHE'][$i]);
+            $code = str_replace('<?php', '', $code);
+            $code = str_replace('?>', '', $code);
+
+            if($i == 0){
+                fwrite($handle, "<?php\n// Plugins Condenser : ".$i."\n".$code."\n");
+            } else {
+                fwrite($handle, "\n// Plugins Condenser : ".$i."\n".$code."\n");
+            }
+        }
+
+        fclose($handle);
     }
 }
