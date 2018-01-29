@@ -17,4 +17,14 @@ Just edit : `$config['cfg']['dir'] (Plugins Folder)`
 `$GPA_PLUGINS['version']     = '1.0'; // (Just For You)`
 
 `$GPA_PLUGINS['status']      = 'enabled'; // (enabled or disabled)`
-
+  
+  
+```
+├── PluginsFolder/
+│   ├── PluginsName/
+│   │   ├── GPA-autoloader.php (Config File)
+│   │   └── Function/ (Plugins Class Folder)
+│   └── PluginsName2/
+│   │   ├── GPA-autoloader.php (Config File)
+│   │   └── Function/ (Plugins Class Folder)
+```
