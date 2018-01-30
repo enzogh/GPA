@@ -1,8 +1,12 @@
 <?php
 $config = array(
     'CFG' => array(
-        'dir' => 'plugins', // Plugins Directory
-        'dir_condenser' => 'condenser', // Condenser Directory
+        'dir'               => 'plugins', // Plugins Directory
+        'dir_condenser'     => 'condenser', // Condenser Directory
+        'dir_secure_load'   => 'secure', // Secure Load Result Directory
+
+        'display_error' => 'disabled', // (enabled or disabled)
+        'secure_load'   => 'disabled', // (enabled or disabled)
     ),
 
     'PLUGINS' => array(),
@@ -11,7 +15,25 @@ $config = array(
     'PLUGINS_ERROR' => array(),
 
     'PLUGINS_CACHE' => array(),
+
+    'PLUGINS_SECURE_LOAD' => array(),
+    'PLUGINS_SECURE_LOAD_RESULT' => array(),
+
+    'BLACKLIST' => array(
+        'exec',
+        'passthru',
+        'system',
+        'shell_exec',
+        'popen',
+        'proc_open',
+        'pcntl_exec',
+        'eval',
+    ),
 );
+
+if($config['CFG']['display_error'] == 'disabled'){
+    error_reporting(0);
+}
 
 $GPA = scandir($config['CFG']['dir'], 1);
 
@@ -35,12 +57,22 @@ for($i = 0; $i < count($config['PLUGINS']); $i++){
 
                         include($file);
 
-                        $handle = fopen($file, 'r');
-                        $contents = fread($handle, filesize($file));
-                        fclose($handle);
-
                         if($GPA_PLUGINS['condenser'] == 'enabled'){
+                            $handle = fopen($file, 'r');
+                            $contents = fread($handle, filesize($file));
+                            fclose($handle);
+
                             array_push($config['PLUGINS_CACHE'], base64_encode($contents));
+                        }
+
+                        if($config['CFG']['secure_load'] == 'enabled'){
+                            if(!file_exists($config['CFG']['dir_secure_load'].'/GPA-Secure-Result.txt')){
+                                $handle = fopen($file, 'r');
+                                $contents = fread($handle, filesize($file));
+                                fclose($handle);
+
+                                array_push($config['PLUGINS_SECURE_LOAD'], base64_encode($contents));
+                            }
                         }
                     }
                 }
@@ -73,12 +105,41 @@ if(!empty($config['PLUGINS_CACHE'])){
             $code = str_replace('?>', '', $code);
 
             if($i == 0){
-                fwrite($handle, "<?php\n// Plugins Condenser : ".$i."\n".$code."\n");
+                fwrite($handle, "<?php\n// Plugins Condenser : ".$i.$code."\n");
             } else {
-                fwrite($handle, "\n// Plugins Condenser : ".$i."\n".$code."\n");
+                fwrite($handle, "\n// Plugins Condenser : ".$i.$code."\n");
             }
         }
 
         fclose($handle);
+    }
+}
+
+if($config['CFG']['secure_load'] == 'enabled'){
+    if(!file_exists($config['CFG']['dir_secure_load'].'/GPA-Secure-Result.txt')){
+        if(!empty($config['PLUGINS_SECURE_LOAD'])){
+            for($i = 0; $i < count($config['PLUGINS_SECURE_LOAD']); $i++){
+                $code = strtolower(base64_decode($config['PLUGINS_SECURE_LOAD'][$i]));
+
+                foreach($config['BLACKLIST'] as $blacklist){
+                    if(strpos($code, $blacklist) !== FALSE){
+                        array_push($config['PLUGINS_SECURE_LOAD_RESULT'], 'Suspect Found : '.$blacklist);
+                    }
+                }
+            }
+
+            $handle = fopen($config['CFG']['dir_secure_load'].'/GPA-Secure-Result.txt', 'a+');
+
+            if(empty($config['PLUGINS_SECURE_LOAD_RESULT'])){
+                fwrite($handle, "/**\n *\n * GPA Secure Load\n *\n **/\n\nNothing is suspicious");
+            } else {
+                fwrite($handle, "/**\n *\n * GPA Secure Load\n *\n **/\n\nsuspicious function used found :\n");
+                foreach($config['PLUGINS_SECURE_LOAD_RESULT'] as $found){
+                    fwrite($handle, $found."\n");
+                }
+            }
+
+            fclose($handle);
+        }
     }
 }
