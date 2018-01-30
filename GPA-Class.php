@@ -8,7 +8,7 @@ $config = array(
 
         'display_error' => 'disabled', // (enabled or disabled)
         'secure_load'   => 'disabled', // (enabled or disabled)
-        'encrypt_file'  => 'enabled',
+        'encrypt_file'  => 'dsiabled', // (enabled or disabled)
     ),
 
     'PLUGINS' => array(),
@@ -35,6 +35,10 @@ $config = array(
         'eval',
     ),
 );
+
+/**
+ * GPA - GarryHost Plugins Autoloader
+ */
 
 if($config['CFG']['display_error'] == 'disabled'){
     error_reporting(0);
