@@ -4,8 +4,9 @@ GarryHost Plugins Autoloader
 Default Config :
 ```
 (You can edit this inside GPA-Class.php)
-$config['cfg']['dir'] (Plugins Folder)
-$config['cfg']['dir_condenser'] (Condenser Directory : this allows to condense your code in 1 php file works only with php files)
+$config['CFG']['dir'] (Plugins Folder)
+$config['CFG']['dir_condenser'] (Condenser Directory : this allows to condense your code in 1 php file works only with php files)
+$config['CFG']['dir_secure_load'] (Secure Load Directory : scan your php files for found suspicious functions)
 ```
 
 # Plugins Config Example : 
@@ -52,4 +53,13 @@ to have the file condense :
 your_directory_condenser/GPA-condenser.php
 
 to finish creating a plugin with the GPA-condenser.php then disable all other plugins
+```
+# Secure Load
+```
+scan your php files for found suspicious functions
+
+Report file : 
+your_directory_secureload/GPA-Secure-Result.txt
+
+to make this system work it must set the variable on enabled ($config['CFG']['secure_load] = 'enabled')
 ```
