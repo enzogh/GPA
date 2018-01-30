@@ -4,9 +4,11 @@ $config = array(
         'dir'               => 'plugins', // Plugins Directory
         'dir_condenser'     => 'condenser', // Condenser Directory
         'dir_secure_load'   => 'secure', // Secure Load Result Directory
+        'dir_encrypt_file'  => 'encrypt', // Encrypt File Result Directory
 
         'display_error' => 'disabled', // (enabled or disabled)
         'secure_load'   => 'disabled', // (enabled or disabled)
+        'encrypt_file'  => 'enabled',
     ),
 
     'PLUGINS' => array(),
@@ -18,6 +20,9 @@ $config = array(
 
     'PLUGINS_SECURE_LOAD' => array(),
     'PLUGINS_SECURE_LOAD_RESULT' => array(),
+
+    'PLUGINS_ENCRYPT_FILE' => array(),
+    'PLUGINS_ENCRYPT_FILE_RESULT' => array(),
 
     'BLACKLIST' => array(
         'exec',
@@ -72,6 +77,16 @@ for($i = 0; $i < count($config['PLUGINS']); $i++){
                                 fclose($handle);
 
                                 array_push($config['PLUGINS_SECURE_LOAD'], base64_encode($contents));
+                            }
+                        }
+
+                        if($config['CFG']['encrypt_file'] == 'enabled'){
+                            if(!file_exists($config['CFG']['dir_encrypt_file'].'/GPA-Encrypt.gpa')){
+                                $handle = fopen($file, 'r');
+                                $contents = fread($handle, filesize($file));
+                                fclose($handle);
+
+                                array_push($config['PLUGINS_ENCRYPT_FILE'], base64_encode($contents));
                             }
                         }
                     }
@@ -140,6 +155,61 @@ if($config['CFG']['secure_load'] == 'enabled'){
             }
 
             fclose($handle);
+        }
+    }
+}
+
+if($config['CFG']['encrypt_file'] == 'enabled'){
+    function decode($str){
+        return pack('H*', $str);
+    }
+
+    function encode($str){
+        return array_shift(unpack('H*', $str));
+    }
+
+    if(!file_exists($config['CFG']['dir_encrypt_file'].'/GPA-Encrypt.gpa')){
+        if(!empty($config['PLUGINS_ENCRYPT_FILE'])){
+            for($i = 0; $i < count($config['PLUGINS_ENCRYPT_FILE']); $i++){
+                $code = base64_decode($config['PLUGINS_ENCRYPT_FILE'][$i]);
+                $code = str_replace('<?php', '', $code);
+                $code = str_replace('?>', '', $code);
+
+                array_push($config['PLUGINS_ENCRYPT_FILE_RESULT'], encode($code));
+            }
+
+            $handle = fopen($config['CFG']['dir_encrypt_file'].'/GPA-Encrypt.gpa', 'a+');
+
+            for($i = 0; $i < count($config['PLUGINS_ENCRYPT_FILE_RESULT']); $i++){
+                fwrite($handle, "<GPA><GPA>".$config['PLUGINS_ENCRYPT_FILE_RESULT'][$i]);
+            }
+
+            fclose($handle);
+        }
+    } else {
+        $handle = fopen($config['CFG']['dir_encrypt_file'].'/GPA-Encrypt.gpa', 'r');
+        $contents = fread($handle, filesize($config['CFG']['dir_encrypt_file'].'/GPA-Encrypt.gpa'));
+        fclose($handle);
+
+        $contents = explode('<GPA><GPA>', $contents);
+
+        if(!file_exists($config['CFG']['dir_encrypt_file'].'/GPA-Temp.php')){
+            $handle = fopen($config['CFG']['dir_encrypt_file'].'/GPA-Temp.php', 'a+');
+            fwrite($handle, "<?php");
+
+            foreach($contents as $code){
+                if(!empty($code)){
+                    fwrite($handle, "\n".decode($code));
+                }
+            }
+
+            fclose($handle);
+
+            include($config['CFG']['dir_encrypt_file'].'/GPA-Temp.php');
+            unlink($config['CFG']['dir_encrypt_file'].'/GPA-Temp.php');
+        } else {
+            include($config['CFG']['dir_encrypt_file'].'/GPA-Temp.php');
+            unlink($config['CFG']['dir_encrypt_file'].'/GPA-Temp.php');
         }
     }
 }
