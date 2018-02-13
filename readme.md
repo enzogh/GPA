@@ -28,10 +28,10 @@ $GPA_PLUGINS['condenser']   = 'enabled'; // (enabled or disabled) this allows to
 ├── PluginsFolder/
 │   ├── PluginsName/
 │   │   ├── GPA-autoloader.php (Config File)
-│   │   └── Function/ (Plugins Class Folder)
+│   │   └── functions/ (Plugins Class Folder)
 │   └── PluginsName2/
 │       ├── GPA-autoloader.php (Config File)
-│       └── Function/ (Plugins Class Folder)
+│       └── functions/ (Plugins Class Folder)
 ```
 
 # Include GPA on your website
