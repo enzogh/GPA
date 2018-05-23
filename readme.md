@@ -78,5 +78,3 @@ Final structure :
 ├── encrypt/ (default name you can change it in the array) 
 │   └── GPA-Encrypt.gpa (it's the file that contains your plugins)
 ```
-
-23463697-2e5c-4657-8302-976effde5378
