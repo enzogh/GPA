@@ -1,4 +1,6 @@
 # GPA
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fenzio53%2FGPA.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fenzio53%2FGPA?ref=badge_shield)
+
 GarryHost Plugins Autoloader
 
 Default Config :
@@ -78,3 +80,7 @@ Final structure :
 ├── encrypt/ (default name you can change it in the array) 
 │   └── GPA-Encrypt.gpa (it's the file that contains your plugins)
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fenzio53%2FGPA.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fenzio53%2FGPA?ref=badge_large)
